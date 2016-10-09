@@ -59,14 +59,6 @@ public class NewsModel {
             Document doc = Jsoup.connect(page).get();
 
             Elements articleElems = doc.select("article.post:has(h1.list-post-title)");
-             /*if(doc.toString().contains("http://4pda.ru/2016/10/08/326507/"))
-                 System.out.println("has");
-             else System.out.println("doesnt have");
-
-             if(doc.toString().contains("http://4pda.ru/2016/10/07/326529/"))
-                 System.out.println("has");
-             else System.out.println("doesnt have");*/
-
 
             for(Element article:articleElems)
             {
