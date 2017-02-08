@@ -80,7 +80,7 @@ public class AutoLoadingAdapter extends RecyclerView.Adapter {
 
             hldr.header.setText(mItems.get(position).title);
             hldr.date.setText(mItems.get(position).date);
-            Glide.with(mContext).load(mItems.get(position).pic_url).placeholder(mContext.getResources().getDrawable(R.drawable.placeholder)).into(hldr.image);
+            Glide.with(mContext).load("http:"+mItems.get(position).pic_url).placeholder(mContext.getResources().getDrawable(R.drawable.placeholder)).into(hldr.image);
         }
 
         if(position == mItems.size()  && position != 0){

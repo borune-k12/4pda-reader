@@ -58,15 +58,16 @@ public class NewsModel {
             Log.d(TAG,"loading "+page);
             Document doc = Jsoup.connect(page).get();
 
-            Elements articleElems = doc.select("article.post:has(h1.list-post-title)");
+            Elements articleElems = doc.select("article.post:has(h2.list-post-title)");
 
             for(Element article:articleElems)
             {
-                Element post = article.select("h1.list-post-title").first();
+                Element post = article.select("h2.list-post-title").first();
                 Element visual = article.select("div.visual").first();
 
                 NewsItem item = new NewsItem(post.select("a").attr("title"),
                                              post.select("a").attr("href"),
+
                                              visual.select("img").attr("src"),
                                              visual.select("em.date").first().ownText());
                 mNews.add(item);

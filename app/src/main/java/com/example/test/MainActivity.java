@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements AutoLoadingAdapte
         else {
             selectNews.setVisibility(View.INVISIBLE);
             pageLoading.setVisibility(View.VISIBLE);
-            webview.loadUrl(url);
+            webview.loadUrl("http:"+url);
         }
     }
 

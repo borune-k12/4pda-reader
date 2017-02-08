@@ -48,7 +48,7 @@ public class NewsItemActivity extends AppCompatActivity {
 
         Intent startIntent = getIntent();
 
-        String url = startIntent.getStringExtra("url");
+        String url = "http:"+startIntent.getStringExtra("url");
         String title = startIntent.getStringExtra("title");
         if(!url.equals(""))
             webview.loadUrl(url);
