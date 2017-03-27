@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -18,22 +19,26 @@ import android.widget.ProgressBar;
 public class NewsItemActivity extends AppCompatActivity {
 
     private WebView webview;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_news_item);
-        if(savedInstanceState != null){
-            Intent intent = new Intent();
-            setResult(RESULT_OK, intent);
-            intent.putExtra("isClosedByUser",false);
-            finish();
-        }
 
 
         ProgressBar pageLoading = (ProgressBar)findViewById(R.id.progress);
         webview = (WebView) findViewById(R.id.webview);
+        webview.getSettings().setJavaScriptEnabled(true);
+        if(savedInstanceState != null){
+            Intent intent = new Intent();
+            setResult(RESULT_OK, intent);
+            intent.putExtra("isClosedByUser",false);
+
+            intent.putExtra("history",savedInstanceState);
+            finish();
+        }
 
         webview.setWebViewClient(new WebViewClient(){
             @Override
@@ -45,21 +50,22 @@ public class NewsItemActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url){
                 pageLoading.setVisibility(View.INVISIBLE);
                 webview.setVisibility(View.VISIBLE);
+                actionBar.setTitle(webview.getTitle());
             }
         });
 
         Intent startIntent = getIntent();
+        Bundle history = startIntent.getBundleExtra("history");
+        if(history != null)
+            webview.restoreState(history);
+        else {
+            String url = "http:" + startIntent.getStringExtra("url");
+            if (!url.equals(""))
+                webview.loadUrl(url);
+        }
 
-        String url = "http:"+startIntent.getStringExtra("url");
-        String title = startIntent.getStringExtra("title");
-        if(!url.equals(""))
-            webview.loadUrl(url);
-
-        ActionBar actionBar = getSupportActionBar();
-
+        actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        if(!title.equals(""))
-            actionBar.setTitle(title);
     }
 
     @Override
@@ -80,7 +86,8 @@ public class NewsItemActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle saveBundle)
     {
-        saveBundle.putBoolean("lala",true);
+        WebBackForwardList history = webview.copyBackForwardList();
+        webview.saveState(saveBundle);
     }
 
 

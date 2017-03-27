@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements AutoLoadingAdapte
 
         if (mOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             webview = (WebView) findViewById(R.id.webview);
+            webview.getSettings().setJavaScriptEnabled(true);
             webview.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -120,9 +121,11 @@ public class MainActivity extends AppCompatActivity implements AutoLoadingAdapte
                     Intent intent = new Intent(MainActivity.this, NewsItemActivity.class);
                     intent.putExtra("url", url);
                     intent.putExtra("title", title);
+                    intent.putExtra("history",savedInstanceState.getBundle("history"));
                     startActivityForResult(intent, 1);
-                } else if (mOrientation == Configuration.ORIENTATION_LANDSCAPE)
-                    webview.loadUrl(url);
+                }
+                /*else if (mOrientation == Configuration.ORIENTATION_LANDSCAPE)
+                    webview.loadUrl("http:"+url);*/
             }
 
         }
@@ -188,6 +191,12 @@ public class MainActivity extends AppCompatActivity implements AutoLoadingAdapte
     public void onSaveInstanceState(Bundle saveBundle)
     {
         saveBundle.putInt("index",adapter.getSelectedIndex());
+
+        if(webview != null) {
+            Bundle history = new Bundle();
+            webview.saveState(history);
+            saveBundle.putBundle("history", history);
+        }
     }
 
     @Override
@@ -211,13 +220,14 @@ public class MainActivity extends AppCompatActivity implements AutoLoadingAdapte
         if(requestCode == 1 && resultCode == RESULT_OK) {
             if(data.getBooleanExtra("isClosedByUser",false))
                 adapter.setSelectedIndex(-1);
+            Bundle history = data.getBundleExtra("history");
+            if(history != null)
+                webview.restoreState(history);
         }
     }
 
     @Override
     public void needMoreData() {
-        Log.d("tt","more");
-        System.out.println("onNext from adapter");
         subject.onNext(false);
     }
 
@@ -227,17 +237,19 @@ public class MainActivity extends AppCompatActivity implements AutoLoadingAdapte
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_BACK:
-                    if (webview.canGoBack()) {
-                        webview.goBack();
-                    } else {
-                        finish();
-                    }
-                    return true;
-            }
+        if(mOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                switch (keyCode) {
+                    case KeyEvent.KEYCODE_BACK:
+                        if (webview.canGoBack()) {
+                            webview.goBack();
+                        } else {
+                            finish();
+                        }
+                        return true;
+                }
 
+            }
         }
         return super.onKeyDown(keyCode, event);
     }
