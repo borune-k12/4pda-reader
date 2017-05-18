@@ -78,7 +78,7 @@ public class AutoLoadingAdapter extends RecyclerView.Adapter {
                 Log.d(TAG, "select " + position);
             } else hldr.setSelected(false);
 
-            hldr.header.setText(mItems.get(position).title);
+            hldr.header.setText(mItems.get(position).title.replaceAll("&quot;","\""));
             hldr.date.setText(mItems.get(position).date);
             Glide.with(mContext).load("http:"+mItems.get(position).pic_url).placeholder(mContext.getResources().getDrawable(R.drawable.placeholder)).into(hldr.image);
         }
